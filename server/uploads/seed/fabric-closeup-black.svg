@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1200" width="1000" height="1200">
+<defs>
+<radialGradient id="bgx" cx="50%" cy="38%" r="75%">
+<stop offset="0" stop-color="#101410"/><stop offset="1" stop-color="#060806"/>
+</radialGradient>
+<radialGradient id="glowx" cx="50%" cy="100%" r="60%">
+<stop offset="0" stop-color="#39D353" stop-opacity=".35"/><stop offset="1" stop-color="#39D353" stop-opacity="0"/>
+</radialGradient>
+<linearGradient id="bodyx" x1="0" x2="1">
+<stop offset="0" stop-color="#0b0d0b"/><stop offset=".22" stop-color="#151815"/>
+<stop offset=".55" stop-color="#232823"/><stop offset=".85" stop-color="#151815"/><stop offset="1" stop-color="#0b0d0b"/>
+</linearGradient>
+<filter id="puffx" x="-10%" y="-10%" width="120%" height="130%">
+<feGaussianBlur in="SourceAlpha" stdDeviation="3" result="b"/>
+<feSpecularLighting in="b" surfaceScale="6" specularConstant=".9" specularExponent="22" lighting-color="#d9ffe0" result="s">
+<feDistantLight azimuth="235" elevation="48"/>
+</feSpecularLighting>
+<feComposite in="s" in2="SourceAlpha" operator="in" result="sh"/>
+<feDropShadow dx="3" dy="6" stdDeviation="3" flood-color="#000" flood-opacity=".55" in="SourceGraphic" result="d"/>
+<feMerge><feMergeNode in="d"/><feMergeNode in="sh"/></feMerge>
+</filter>
+<pattern id="knitx" width="8" height="10" patternUnits="userSpaceOnUse">
+<path d="M0 0 L4 5 L8 0 M0 5 L4 10 L8 5" stroke="#000" stroke-opacity=".08" fill="none"/>
+</pattern>
+</defs>
+<pattern id="macro" width="40" height="48" patternUnits="userSpaceOnUse">
+<rect width="40" height="48" fill="#151815"/>
+<path d="M0 0 Q10 30 20 48 M20 0 Q30 30 40 48 M20 0 Q10 30 0 48 M40 0 Q30 30 20 48" stroke="#0b0d0b" stroke-width="7" fill="none"/>
+<path d="M2 4 Q10 26 18 44 M22 4 Q30 26 38 44" stroke="#232823" stroke-width="2" fill="none" opacity=".6"/>
+</pattern>
+<linearGradient id="rake" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#39D353" stop-opacity=".22"/><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></linearGradient>
+<rect width="1000" height="1200" fill="url(#macro)"/><rect width="1000" height="1200" fill="url(#rake)"/>
+<path d="M0 980 Q500 940 1000 990 L1000 1200 L0 1200 Z" fill="#101210"/>
+<path d="M0 980 Q500 940 1000 990" stroke="#000" stroke-opacity=".35" stroke-width="6" stroke-dasharray="18 10" fill="none"/>
+<path d="M0 1010 Q500 970 1000 1020" stroke="#000" stroke-opacity=".35" stroke-width="6" stroke-dasharray="18 10" fill="none"/>
+</svg>
