@@ -56,8 +56,10 @@
   .outline-text-mute { color: transparent; -webkit-text-stroke: 1px var(--color-line); }
   /* Raised puff-print ink: a dark green extrusion under the letters plus a soft drop shadow (scales with font size). */
   .puff {
+    --d: calc(var(--puff, 1) * .008em);
     -webkit-text-stroke: .025em #062b0f; paint-order: stroke fill;
-    text-shadow: 0 .008em 0 #1a9a3a, 0 .016em 0 #12722a, 0 .024em 0 #0f6324, 0 .032em 0 #0d5c21, 0 .04em 0 #0a4a1a, 0 .05em 0 #083d16, 0 .09em .12em rgba(0,0,0,.5);
+    text-shadow: 0 var(--d) 0 #1a9a3a, 0 calc(var(--d) * 2) 0 #12722a, 0 calc(var(--d) * 3) 0 #0f6324, 0 calc(var(--d) * 4) 0 #0d5c21,
+      0 calc(var(--d) * 5) 0 #0a4a1a, 0 calc(var(--d) * 6) 0 #083d16, 0 calc(var(--d) * 11) calc(var(--d) * 15) rgba(0,0,0,.5);
   }
 
   .btn {

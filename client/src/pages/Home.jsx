@@ -1,119 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { useSettings } from '../context/store.jsx';
 import { api, asset } from '../lib/api.js';
 import { useSeo } from '../lib/seo.js';
 import { Page, MaskText, Reveal, Marquee } from '../components/ui.jsx';
 import ProductCard, { ProductGridSkeleton } from '../components/ProductCard.jsx';
-
-// Relative luminance → pick readable ink for whatever tee colour is showing.
-const isLight = (hex = '#000000') => {
-  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.55;
-};
-
-// Hero: a giant swatch of the actual tee fabric with the back print raised on it. The swatch takes the colour
-// of each product in the catalogue (from the API); the puff type tilts toward the cursor like real raised ink.
-function Hero({ hero }) {
-  const [tees, setTees] = useState([]);
-  const [idx, setIdx] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const panel = useRef(null);
-  const mx = useMotionValue(0.5);
-  const my = useMotionValue(0.5);
-  const rotY = useSpring(useTransform(mx, [0, 1], [-14, 14]), { stiffness: 120, damping: 18 });
-  const rotX = useSpring(useTransform(my, [0, 1], [10, -10]), { stiffness: 120, damping: 18 });
-  const shine = useTransform([mx, my], ([x, y]) => `radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(255,255,255,.55), transparent 38%)`);
-
-  useEffect(() => {
-    api.get('/products', { params: { limit: 12 } }).then(({ data }) => {
-      setTees(data.products.filter((p) => p.colors?.[0]).map((p) => ({ slug: p.slug, name: p.colors[0].name, hex: p.colors[0].hex, image: p.image })));
-    }).catch(() => {});
-  }, []);
-  useEffect(() => {
-    if (tees.length < 2 || paused) return undefined;
-    const t = setInterval(() => setIdx((i) => (i + 1) % tees.length), 3800);
-    return () => clearInterval(t);
-  }, [tees.length, paused]);
-
-  const tee = tees[idx] || { hex: '#151815', name: '' };
-  const light = isLight(tee.hex);
-  const ink = light ? 'text-ink' : 'text-paper';
-  const word = hero.hindi || 'बाकाचिकी';
-
-  const onMove = (e) => {
-    const r = panel.current.getBoundingClientRect();
-    mx.set((e.clientX - r.left) / r.width);
-    my.set((e.clientY - r.top) / r.height);
-  };
-  const onLeave = () => { mx.set(0.5); my.set(0.5); };
-
-  return (
-    <section className="relative isolate flex min-h-[100svh] flex-col bg-ink px-3 pb-3 pt-20 sm:px-4 lg:pt-24" aria-label="Featured drop">
-      <h1 className="sr-only">{hero.title || 'BAKACHIKI'} — {hero.subtitle}</h1>
-      <motion.div ref={panel} onPointerMove={onMove} onPointerLeave={onLeave}
-        animate={{ backgroundColor: tee.hex }} transition={{ duration: 0.9, ease: [0.2, 0.9, 0.1, 1] }}
-        className="relative flex flex-1 flex-col overflow-hidden [perspective:1200px]">
-        {/* knit texture + soft fold shading so the panel reads as cotton, not a flat colour */}
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-[.18] mix-blend-overlay [background:repeating-linear-gradient(90deg,rgba(255,255,255,.5)_0_1px,transparent_1px_4px),repeating-linear-gradient(0deg,rgba(0,0,0,.6)_0_1px,transparent_1px_3px)]" />
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_20%_0%,rgba(255,255,255,.14),transparent_55%),radial-gradient(90%_70%_at_100%_100%,rgba(0,0,0,.45),transparent_60%)]" />
-
-        {/* top strip: drop name + colour name, like the tee's own label */}
-        <div className={`relative z-10 flex items-start justify-between gap-4 p-4 sm:p-6 ${ink}`}>
-          <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="label inline-flex items-center gap-2">
-            <span className="size-2 animate-pulse rounded-full bg-neon" />{hero.eyebrow}
-          </motion.p>
-          <AnimatePresence mode="wait">
-            <motion.p key={tee.name} initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 8 }} className="display text-right text-2xl sm:text-4xl">
-              {tee.name}<span className="block font-sans text-[0.65rem] font-bold tracking-[0.2em] opacity-70">240 GSM · PUFF PRINT</span>
-            </motion.p>
-          </AnimatePresence>
-        </div>
-
-        {/* the print */}
-        <div className="relative z-0 grid flex-1 place-items-center px-2">
-          <motion.div style={{ rotateX: rotX, rotateY: rotY, transformStyle: 'preserve-3d' }} className="relative select-none text-center">
-            <motion.p aria-hidden="true" initial={{ opacity: 0, scale: 1.25, filter: 'blur(12px)' }} animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }} transition={{ delay: 0.15, duration: 1.1, ease: [0.2, 0.9, 0.1, 1] }}
-              className="puff hindi relative whitespace-nowrap text-[21vw] leading-none text-green lg:text-[15vw]" style={{ transform: 'translateZ(60px)' }}>
-              {word}
-              <motion.span aria-hidden="true" className="pointer-events-none absolute inset-0 bg-clip-text text-transparent mix-blend-soft-light [text-shadow:none] [-webkit-text-stroke:0]" style={{ backgroundImage: shine }}>{word}</motion.span>
-            </motion.p>
-            <p aria-hidden="true" className={`display mt-1 text-[5vw] tracking-[0.35em] opacity-80 lg:text-[2.6vw] ${ink}`} style={{ transform: 'translateZ(20px)' }}>{hero.title || 'BAKACHIKI'}</p>
-          </motion.div>
-        </div>
-
-        {/* copy + colour swatches */}
-        <div className={`relative z-10 grid items-end gap-6 p-4 sm:p-6 lg:grid-cols-12 ${ink}`}>
-          <div className="lg:col-span-5">
-            <p className="max-w-sm text-sm opacity-85 sm:text-base">{hero.subtitle}</p>
-            <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-              <Link to={hero.cta_primary?.href || '/new-drops'} className="btn btn-solid">{hero.cta_primary?.label || 'EXPLORE THE DROP'}<ArrowRight size={16} /></Link>
-              <Link to={hero.cta_secondary?.href || '/shop'} className="btn btn-ghost bg-ink/60 text-paper backdrop-blur">{hero.cta_secondary?.label || 'SHOP NOW'}</Link>
-            </div>
-          </div>
-          {tees.length > 0 && (
-            <div className="lg:col-span-6 lg:col-start-7" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-              <p className="label mb-3 opacity-70 lg:text-right">Pick a colour · {tees.length} on the rack</p>
-              <div role="radiogroup" aria-label="Tee colour" className="flex flex-wrap items-center gap-2 lg:justify-end">
-                {tees.map((t, i) => (
-                  <button key={t.slug} role="radio" aria-checked={i === idx} aria-label={t.name} onClick={() => { setIdx(i); setPaused(true); }}
-                    className={`grid size-11 place-items-center rounded-full border-2 transition ${i === idx ? 'scale-110 border-neon' : light ? 'border-ink/25 hover:border-ink' : 'border-paper/25 hover:border-paper'}`}>
-                    <span className="size-7 rounded-full shadow-[inset_0_-3px_6px_rgba(0,0,0,.35)]" style={{ background: t.hex }} />
-                  </button>
-                ))}
-                <Link to={`/product/${tee.slug}`} className="ml-1 inline-flex h-11 items-center gap-3 border border-line bg-ink/80 pl-1 pr-4 text-sm font-bold text-paper backdrop-blur transition hover:border-neon hover:text-neon">
-                  {tee.image && <img src={asset(tee.image)} alt="" className="size-9 object-cover" />}Shop {tee.name}<ArrowRight size={15} />
-                </Link>
-              </div>
-            </div>
-          )}
-        </div>
-      </motion.div>
-    </section>
-  );
-}
+import Hero from '../components/Hero.jsx';
 
 function SectionHead({ index, title, hindi, link, linkLabel }) {
   return (
@@ -152,7 +46,7 @@ export default function Home() {
 
   return (
     <Page>
-      <Hero hero={hero} />
+      <Hero hero={hero} stickers={marquee.items} />
 
       <div className="relative z-10 -my-4 -rotate-2 bg-neon py-3 text-ink shadow-[0_0_60px_rgba(57,211,83,.35)]">
         <Marquee items={marquee.items} itemClass="display text-3xl sm:text-4xl" speed={22} />
