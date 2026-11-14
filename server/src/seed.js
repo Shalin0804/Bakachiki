@@ -1,6 +1,7 @@
-// Idempotent seed: admin account, categories, collections and the two launch tees.
+// Idempotent seed: admin account, categories, collections and the launch tees (one per colour).
 // Product facts come from the brand brief (240 GSM cotton, drop shoulder, puff print, Hindi back type).
 // Prices and stock are placeholders — edit them in Admin → Products.
+import fs from 'node:fs';
 import bcrypt from 'bcryptjs';
 import { sequelize } from './db.js';
 import { User, Category, Collection, Product, ProductImage, Variant, Coupon } from './models.js';
@@ -16,20 +17,35 @@ const hotspots = [
   { view: 'front', x: 50, y: 16, title: 'Neck Design', body: 'Crew neck finish that frames the oversized fit.' },
 ];
 
+const tee = (color, hex, dir, code, category, flags, description) => ({
+  color, hex, dir, code, category, flags, description,
+  name: `Hindi Puff Oversized Tee — ${color}`, slug: `hindi-puff-oversized-tee-${color.toLowerCase().replace(/ /g, '-')}`,
+});
+const NEW = { is_featured: false, is_new_arrival: true, is_best_seller: false };
 const products = [
-  {
-    color: 'Black', hex: '#151815', file: 'black', code: 'BLK', category: 'oversized-t-shirts',
-    name: 'Hindi Puff Oversized Tee — Black', slug: 'hindi-puff-oversized-tee-black',
-    flags: { is_featured: true, is_new_arrival: true, is_best_seller: true },
-    description: 'The OG. A jet-black oversized tee with BAKACHIKI in raised green puff print and a giant Devanagari बकचिकी across the back. Cut boxy with a drop shoulder on 240 GSM cotton.',
-  },
-  {
-    color: 'Beige', hex: '#D8C8A6', file: 'beige', code: 'BEG', category: 'graphic-tees',
-    name: 'Hindi Puff Oversized Tee — Beige', slug: 'hindi-puff-oversized-tee-beige',
-    flags: { is_featured: true, is_new_arrival: true, is_best_seller: false },
-    description: 'Sand-toned oversized tee with green puff BAKACHIKI branding and loud बकचिकी Hindi typography on the back. Drop-shoulder, boxy, built on 240 GSM cotton.',
-  },
+  tee('Black', '#151815', 'jet-black', 'BLK', 'oversized-t-shirts', { is_featured: true, is_new_arrival: true, is_best_seller: true },
+    'The OG. A jet-black oversized tee with BAKACHIKI in raised green puff print and a giant Devanagari बकचिकी across the back. Cut boxy with a drop shoulder on 240 GSM cotton.'),
+  tee('Beige', '#D8C8A6', 'beige', 'BEG', 'graphic-tees', { is_featured: true, is_new_arrival: true, is_best_seller: false },
+    'Sand-toned oversized tee with green puff BAKACHIKI branding and loud बकचिकी Hindi typography on the back. Drop-shoulder, boxy, built on 240 GSM cotton.'),
+  tee('Off-White', '#EEEBE3', 'off-white', 'OWT', 'graphic-tees', NEW,
+    'Clean off-white oversized tee with green puff BAKACHIKI on the chest and बकचिकी raised across the back. Drop-shoulder, boxy, 240 GSM cotton.'),
+  tee('Forest Green', '#1E4A2A', 'forest-green', 'FGR', 'oversized-t-shirts', NEW,
+    'Deep forest-green oversized tee with BAKACHIKI in raised green puff print and बकचिकी across the back. Drop-shoulder, boxy, 240 GSM cotton.'),
+  tee('Purple', '#4A2163', 'purple', 'PRP', 'graphic-tees', NEW,
+    'Rich purple oversized tee with green puff BAKACHIKI branding and loud बकचिकी Hindi typography on the back. Drop-shoulder, boxy, 240 GSM cotton.'),
+  tee('Charcoal Grey', '#3B3E40', 'charcoal-grey', 'CGR', 'oversized-t-shirts', NEW,
+    'Charcoal-grey oversized tee with BAKACHIKI in raised green puff print and बकचिकी across the back. Drop-shoulder, boxy, 240 GSM cotton.'),
 ];
+
+// Photos live in uploads/seed/products/<dir>/NN_<view>.png, numbered in display order.
+const KIND = { front_model: 'front', back_model: 'back', side_model: 'side', print_macro: 'print' };
+function productMedia(p) {
+  const dir = new URL(`../uploads/seed/products/${p.dir}/`, import.meta.url);
+  return fs.readdirSync(dir).sort().map((file, i) => {
+    const view = file.replace(/^\d+_|\.\w+$/g, '');
+    return { kind: KIND[view] || 'gallery', color: p.color, url: `/uploads/seed/products/${p.dir}/${file}`, alt: `${p.name} — ${view.replace('_', ' ')}`, sort_order: i };
+  });
+}
 
 await sequelize.transaction(async (transaction) => {
   const email = (process.env.ADMIN_EMAIL || 'admin@bakachiki.in').toLowerCase();
@@ -56,7 +72,7 @@ await sequelize.transaction(async (transaction) => {
   });
   const [essentials] = await Collection.findOrCreate({
     where: { slug: 'oversized-essentials' },
-    defaults: { name: 'Oversized Essentials', tagline: '240 GSM. Drop shoulder.', description: 'The everyday heavyweight oversized fit, in black and beige.', image_url: '/uploads/seed/collection-essentials.svg', sort_order: 1 },
+    defaults: { name: 'Oversized Essentials', tagline: '240 GSM. Drop shoulder.', description: 'The everyday heavyweight oversized fit, in six colours.', image_url: '/uploads/seed/collection-essentials.svg', sort_order: 1 },
     transaction,
   });
 
@@ -72,14 +88,7 @@ await sequelize.transaction(async (transaction) => {
     }, { transaction });
     await product.setCollections([hindi.id, essentials.id], { transaction });
 
-    const media = [
-      ['front', `${p.file}-front.svg`], ['back', `${p.file}-back.svg`], ['side', `${p.file}-side.svg`],
-      ['print', `print-closeup-${p.file}.svg`], ['fabric', `fabric-closeup-${p.file}.svg`],
-      ['model', `hero-${p.file}.jpg`],
-    ];
-    await ProductImage.bulkCreate(media.map(([kind, file], i) => ({
-      product_id: product.id, kind, color: p.color, url: `/uploads/seed/${file}`, alt: `${p.name} — ${kind} view`, sort_order: i,
-    })), { transaction });
+    await ProductImage.bulkCreate(productMedia(p).map((m) => ({ ...m, product_id: product.id })), { transaction });
 
     for (const [i, size] of SIZES.entries()) {
       const v = await Variant.create({ product_id: product.id, color: p.color, color_hex: p.hex, size, sku: `BK-HPT-${p.code}-${size}`, stock: 0 }, { transaction });

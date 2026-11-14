@@ -9,7 +9,7 @@ export const DEFAULT_SETTINGS = {
     title: 'BAKACHIKI',
     hindi: 'बकचिकी',
     subtitle: 'Oversized tees with loud Hindi type, raised puff print and zero chill. Made for the streets that raised us.',
-    images: ['/uploads/seed/hero-black.jpg', '/uploads/seed/hero-beige.jpg'],
+    images: ['/uploads/seed/products/jet-black/99_spec_sheet.jpg', '/uploads/seed/products/beige/99_spec_sheet.jpg'],
     cta_primary: { label: 'EXPLORE THE DROP', href: '/new-drops' },
     cta_secondary: { label: 'SHOP NOW', href: '/shop' },
   },
@@ -19,7 +19,7 @@ export const DEFAULT_SETTINGS = {
     eyebrow: 'THE PUFF EFFECT',
     title: 'TYPE YOU CAN FEEL.',
     body: 'Every back print is raised puff ink — run your fingers over it. The Devanagari stands off the cotton like a 3D billboard.',
-    image_url: '/uploads/seed/print-closeup-black.svg',
+    image_url: '/uploads/seed/products/jet-black/06_print_macro.png',
     cta_label: 'FEEL THE DROP',
     cta_href: '/shop',
   },
@@ -27,7 +27,7 @@ export const DEFAULT_SETTINGS = {
     title: 'NOT YOUR AVERAGE TEE.',
     hindi: 'हम अलग हैं',
     body: 'BAKACHIKI started with one idea: Hindi deserves to be worn loud. We take the script we grew up with, blow it up across the back of heavyweight oversized tees, and raise it with puff print so it literally stands out.\n\nEvery piece is cut drop-shoulder and boxy, built on 240 GSM cotton that holds its shape wash after wash.',
-    image_url: '/uploads/seed/beige-back.svg',
+    image_url: '/uploads/seed/products/beige/08_back_model.png',
     pillars: [
       { title: '240 GSM', body: 'Heavyweight cotton with structure.' },
       { title: 'PUFF PRINT', body: 'Raised, embossed ink you can feel.' },
@@ -57,7 +57,7 @@ export const DEFAULT_SETTINGS = {
   seo: {
     title: 'BAKACHIKI — Hindi Streetwear, Oversized Puff Print Tees',
     description: 'BAKACHIKI makes funky oversized streetwear tees with loud Hindi typography, raised puff print and 240 GSM cotton. Made in India.',
-    og_image: '/uploads/seed/hero-black.jpg',
+    og_image: '/uploads/seed/products/jet-black/99_spec_sheet.jpg',
   },
 };
 
