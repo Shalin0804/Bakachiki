@@ -9,7 +9,6 @@ export const DEFAULT_SETTINGS = {
     title: 'BAKACHIKI',
     hindi: 'बाकाचिकी',
     subtitle: 'Oversized tees with loud Hindi type, raised puff print and zero chill. Made for the streets that raised us.',
-    images: ['/uploads/seed/products/jet-black/99_spec_sheet.jpg', '/uploads/seed/products/beige/99_spec_sheet.jpg'],
     cta_primary: { label: 'EXPLORE THE DROP', href: '/new-drops' },
     cta_secondary: { label: 'SHOP NOW', href: '/shop' },
   },

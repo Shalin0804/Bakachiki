@@ -54,6 +54,11 @@
   .label { font-size: .7rem; letter-spacing: .22em; text-transform: uppercase; font-weight: 500; }
   .outline-text { color: transparent; -webkit-text-stroke: 1.5px var(--color-neon); }
   .outline-text-mute { color: transparent; -webkit-text-stroke: 1px var(--color-line); }
+  /* Raised puff-print ink: a dark green extrusion under the letters plus a soft drop shadow (scales with font size). */
+  .puff {
+    -webkit-text-stroke: .025em #062b0f; paint-order: stroke fill;
+    text-shadow: 0 .008em 0 #1a9a3a, 0 .016em 0 #12722a, 0 .024em 0 #0f6324, 0 .032em 0 #0d5c21, 0 .04em 0 #0a4a1a, 0 .05em 0 #083d16, 0 .09em .12em rgba(0,0,0,.5);
+  }
 
   .btn {
     position: relative; display: inline-flex; align-items: center; justify-content: center; gap: .6rem;
