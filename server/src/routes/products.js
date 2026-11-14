@@ -28,7 +28,7 @@ export function serializeProductCard(p) {
   const firstColor = colors[0]?.name;
   const find = (kind) => images.find((i) => i.kind === kind && (!firstColor || !i.color || i.color === firstColor)) || images.find((i) => i.kind === kind);
   const primary = find('front') || images[0];
-  const hover = find('back') || find('model') || images.find((i) => i !== primary);
+  const hover = find('model') || find('back') || images.find((i) => i !== primary);
   return {
     id: p.id, name: p.name, slug: p.slug,
     price: p.price, discount_price: p.discount_price, sale_price: unitPrice(p),

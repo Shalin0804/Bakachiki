@@ -9,7 +9,7 @@ export const DEFAULT_SETTINGS = {
     title: 'BAKACHIKI',
     hindi: 'बकचिकी',
     subtitle: 'Oversized tees with loud Hindi type, raised puff print and zero chill. Made for the streets that raised us.',
-    images: ['/uploads/seed/hero-black-back.svg', '/uploads/seed/hero-beige-back.svg'],
+    images: ['/uploads/seed/hero-black.jpg', '/uploads/seed/hero-beige.jpg'],
     cta_primary: { label: 'EXPLORE THE DROP', href: '/new-drops' },
     cta_secondary: { label: 'SHOP NOW', href: '/shop' },
   },
@@ -57,7 +57,7 @@ export const DEFAULT_SETTINGS = {
   seo: {
     title: 'BAKACHIKI — Hindi Streetwear, Oversized Puff Print Tees',
     description: 'BAKACHIKI makes funky oversized streetwear tees with loud Hindi typography, raised puff print and 240 GSM cotton. Made in India.',
-    og_image: '/uploads/seed/hero-black-back.svg',
+    og_image: '/uploads/seed/hero-black.jpg',
   },
 };
 

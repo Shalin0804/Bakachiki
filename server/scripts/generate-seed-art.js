@@ -111,8 +111,6 @@ for (const [color, t] of Object.entries(TEES)) {
     <text x="-80" y="760" font-family="${HINDI_FONT}" font-weight="700" font-size="620" fill="${G.main}" filter="url(#puffp)">बकचि</text>
     <rect width="1000" height="1200" fill="url(#glowp)" opacity=".7"/>
   </svg>`);
-  // Hero: transparent cut-out of the back view so the page's giant type and lighting show around it.
-  write(`hero-${color}-back.svg`, `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1200" width="1000" height="1200">${defs(t, 'h')}${tee(t, 'h', 'back')}</svg>`);
 }
 
 // Category/collection art.

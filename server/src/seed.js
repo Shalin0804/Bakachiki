@@ -75,6 +75,7 @@ await sequelize.transaction(async (transaction) => {
     const media = [
       ['front', `${p.file}-front.svg`], ['back', `${p.file}-back.svg`], ['side', `${p.file}-side.svg`],
       ['print', `print-closeup-${p.file}.svg`], ['fabric', `fabric-closeup-${p.file}.svg`],
+      ['model', `hero-${p.file}.jpg`],
     ];
     await ProductImage.bulkCreate(media.map(([kind, file], i) => ({
       product_id: product.id, kind, color: p.color, url: `/uploads/seed/${file}`, alt: `${p.name} — ${kind} view`, sort_order: i,
