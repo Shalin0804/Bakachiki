@@ -112,7 +112,7 @@ r.get('/mine', requireAuth, async (req, res) => {
 async function findAccessibleOrder(req) {
   const order = await Order.findOne({ where: { order_number: req.params.number }, include: orderInclude });
   const email = typeof req.query.email === 'string' ? req.query.email.trim().toLowerCase() : '';
-  const allowed = order && ((req.user && (order.user_id === req.user.id || req.user.role === 'admin')) || (email && order.email.toLowerCase() === email));
+  const allowed = order && ((req.user && order.user_id === req.user.id) || (email && order.email.toLowerCase() === email));
   if (!allowed) fail(404, 'Order not found');
   return order;
 }

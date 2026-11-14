@@ -22,12 +22,11 @@ const Contact = lazy(() => import('./pages/Contact.jsx'));
 const NotFound = lazy(() => import('./pages/NotFound.jsx'));
 const AdminApp = lazy(() => import('./admin/AdminApp.jsx'));
 
-export function RequireAuth({ children, admin = false }) {
+export function RequireAuth({ children }) {
   const { user, authReady } = useAuth();
   const location = useLocation();
   if (!authReady) return <PageLoader />;
   if (!user) return <Navigate to={`/login?next=${encodeURIComponent(location.pathname + location.search)}`} replace />;
-  if (admin && user.role !== 'admin') return <Navigate to="/" replace />;
   return children;
 }
 
@@ -59,7 +58,7 @@ export default function App() {
       <Suspense fallback={<PageLoader />}>
         <ScrollToTop />
         <Routes>
-          <Route path="/admin/*" element={<RequireAuth admin><AdminApp /></RequireAuth>} />
+          <Route path="/admin/*" element={<AdminApp />} />
         </Routes>
         <Toasts />
       </Suspense>

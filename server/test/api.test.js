@@ -90,8 +90,8 @@ test('guest cart → register merges → COD checkout with coupon → admin canc
   const again = await call('POST', '/orders', { token, body: { ...address, email: 'buyer@test.in', payment_method: 'cod', coupon_code: 'TEN' } });
   assert.equal(again.status, 422);
 
-  const admin = (await call('POST', '/auth/login', { body: { email: 'admin@test.in', password: 'Admin@1234' } })).body.token;
-  assert.equal((await call('GET', '/admin/stats', { token })).status, 403, 'customers cannot reach admin');
+  const admin = (await call('POST', '/auth/admin/login', { body: { email: 'admin@test.in', password: 'Admin@1234' } })).body.token;
+  assert.equal((await call('GET', '/admin/stats', { token })).status, 401, 'customer tokens cannot reach admin');
   const list = await call('GET', `/admin/orders?q=${order.body.order.order_number}`, { token: admin });
   const id = list.body.orders[0].id;
   const cancel = await call('PATCH', `/admin/orders/${id}`, { token: admin, body: { status: 'cancelled' } });
@@ -121,7 +121,7 @@ test('razorpay: only a valid signature marks the order paid; admin cannot fake i
   const rpOrder = res.body.razorpay.order_id;
   assert.equal(res.body.order.payment_status, 'pending');
 
-  const admin = (await call('POST', '/auth/login', { body: { email: 'admin@test.in', password: 'Admin@1234' } })).body.token;
+  const admin = (await call('POST', '/auth/admin/login', { body: { email: 'admin@test.in', password: 'Admin@1234' } })).body.token;
   const dbOrder = await M.Order.findOne({ where: { order_number: num } });
   assert.equal((await call('PATCH', `/admin/orders/${dbOrder.id}`, { token: admin, body: { payment_status: 'paid' } })).status, 422);
 
@@ -144,4 +144,48 @@ test('guests cannot read other people\'s orders', async () => {
   const any = await M.Order.findOne();
   assert.equal((await call('GET', `/orders/${any.order_number}`)).status, 404);
   assert.equal((await call('GET', `/orders/${any.order_number}?email=wrong@x.in`)).status, 404);
+});
+
+test('customer and admin logins are separate; roles come from the database', async () => {
+  const login = (path, email, password) => call('POST', path, { body: { email, password } });
+  await M.User.create({ name: 'Boss', email: 'boss@test.in', role: 'super_admin', password_hash: await bcrypt.hash('Boss@12345', 4) });
+  await call('POST', '/auth/register', { body: { name: 'Cust', email: 'cust@test.in', password: 'Cust@12345', role: 'super_admin' } });
+  assert.equal((await M.User.findOne({ where: { email: 'cust@test.in' } })).role, 'customer', 'register ignores a supplied role');
+
+  // Each login form only accepts its own kind of account, with the same generic error.
+  assert.equal((await login('/auth/login', 'admin@test.in', 'Admin@1234')).status, 401);
+  assert.equal((await login('/auth/admin/login', 'cust@test.in', 'Cust@12345')).status, 401);
+  const cust = (await login('/auth/login', 'cust@test.in', 'Cust@12345')).body.token;
+  const admin = (await login('/auth/admin/login', 'admin@test.in', 'Admin@1234')).body.token;
+  const boss = (await login('/auth/admin/login', 'boss@test.in', 'Boss@12345')).body.token;
+  assert.ok(cust && admin && boss);
+
+  // Tokens only work on their own side.
+  assert.equal((await call('GET', '/auth/me', { token: cust })).status, 200);
+  assert.equal((await call('GET', '/auth/me', { token: admin })).status, 401, 'admin token is not a storefront session');
+  assert.equal((await call('GET', '/admin/stats', { token: cust })).status, 401);
+  assert.equal((await call('GET', '/auth/admin/me', { token: admin })).body.user.role, 'admin');
+  assert.equal((await call('GET', '/admin/stats', { token: admin })).status, 200);
+
+  // A forged token claiming a role is ignored: the role is read from MySQL.
+  const jwt = (await import('jsonwebtoken')).default;
+  const custId = (await M.User.findOne({ where: { email: 'cust@test.in' } })).id;
+  const forged = jwt.sign({ sub: custId, role: 'super_admin' }, process.env.JWT_SECRET, { audience: 'admin' });
+  assert.equal((await call('GET', '/admin/stats', { token: forged })).status, 401);
+
+  // Only super_admin manages staff.
+  assert.equal((await call('GET', '/admin/staff', { token: admin })).status, 403);
+  const made = await call('POST', '/admin/staff', { token: boss, body: { name: 'New Admin', email: 'new@test.in', password: 'NewAdmin@1', role: 'admin' } });
+  assert.equal(made.status, 201);
+  assert.equal((await call('PATCH', `/admin/staff/${made.body.user.id}`, { token: admin, body: { role: 'super_admin' } })).status, 403);
+  const bossId = (await call('GET', '/auth/admin/me', { token: boss })).body.user.id;
+  assert.equal((await call('PATCH', `/admin/staff/${bossId}`, { token: boss, body: { is_active: false } })).status, 422, 'no self-lockout');
+
+  // Deactivating cuts off both new logins and existing tokens.
+  const newTok = (await login('/auth/admin/login', 'new@test.in', 'NewAdmin@1')).body.token;
+  assert.equal((await call('PATCH', `/admin/staff/${made.body.user.id}`, { token: boss, body: { is_active: false } })).status, 200);
+  assert.equal((await call('GET', '/admin/stats', { token: newTok })).status, 401);
+  assert.equal((await login('/auth/admin/login', 'new@test.in', 'NewAdmin@1')).status, 401);
+  assert.equal((await call('PATCH', `/admin/customers/${custId}`, { token: admin, body: { is_active: false } })).status, 200);
+  assert.equal((await call('GET', '/auth/me', { token: cust })).status, 401);
 });

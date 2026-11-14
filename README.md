@@ -92,11 +92,22 @@ npm run dev:server         # API on http://localhost:5000 (auto-restarts on chan
 npm run dev:client         # Store on http://localhost:5173 (proxies /api and /uploads)
 ```
 
-## 6. Admin account
+## 6. Logins and roles
 
-Log in at `/login` with `ADMIN_EMAIL` / `ADMIN_PASSWORD` from `server/.env` (defaults: `admin@bakachiki.in` / `ChangeMe@123`), then open **/admin**. **Change the password** from *My account → Password* right away.
+Customers and staff share one `users` table but sign in separately:
 
-To promote another user to admin, set `ADMIN_EMAIL` to their email and run `npm run seed --prefix server`. An existing account is promoted and keeps its password.
+| | Customers | Staff |
+|---|---|---|
+| Pages | `/login`, `/register`, `/forgot-password`, `/account` (`/profile`, `/orders`, `/wishlist`) | `/admin/login`, `/admin/dashboard`, `/products`, `/orders`, `/customers`, `/inventory`, `/settings`, `/staff` |
+| API | `POST /api/auth/login`, `/register`, `/forgot-password` | `POST /api/auth/admin/login`, `GET /api/auth/admin/me`, `/api/admin/*` |
+| Roles | `customer` | `admin`, `super_admin` |
+
+- Each login only accepts its own kind of account, and they issue tokens for different audiences, so a storefront token is rejected by every admin API (and vice versa). The two sessions are stored separately in the browser.
+- The role is never taken from the request or the token: every protected request reloads the user from MySQL and checks `role` and `is_active`.
+- There is no public staff sign-up. The seed makes `ADMIN_EMAIL` / `ADMIN_PASSWORD` from `server/.env` (defaults: `admin@bakachiki.in` / `ChangeMe@123`) the first **super admin**. Sign in at **/admin/login** and **change the password** from *Change password* in the admin sidebar right away.
+- Only a super admin can open *Staff & roles* (`/api/admin/staff`) to add admins, promote/demote, disable accounts or reset staff passwords. A super admin can't demote or disable themselves.
+- Admins can disable a customer from the customer page; disabled users are signed out on their next request.
+- Staff passwords aren't reset by email; a super admin resets them. Re-running the seed restores `ADMIN_EMAIL` as an active super admin if you're ever locked out.
 
 From the admin you can manage, without touching code:
 

@@ -110,7 +110,7 @@ export function StoreProvider({ children }) {
   }, [loadSettings, refreshCart, logout]);
 
   const auth = useMemo(() => ({
-    user, authReady, isAdmin: user?.role === 'admin',
+    user, authReady,
     login: async (body) => { const { data } = await api.post('/auth/login', body); await startSession(data); return data.user; },
     register: async (body) => { const { data } = await api.post('/auth/register', body); await startSession(data); return data.user; },
     startSession, logout, setUser,

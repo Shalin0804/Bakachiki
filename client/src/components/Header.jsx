@@ -141,7 +141,7 @@ export default function Header() {
           </nav>
           <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
             <IconBtn label="Search" onClick={() => setSearch(true)}><Search size={20} /></IconBtn>
-            <IconBtn label={user ? 'My account' : 'Log in'} to={user ? (user.role === 'admin' ? '/admin' : '/account') : '/login'} className="hidden xs:grid"><User size={20} /></IconBtn>
+            <IconBtn label={user ? 'My account' : 'Log in'} to={user ? '/account' : '/login'} className="hidden xs:grid"><User size={20} /></IconBtn>
             <IconBtn label="Wishlist" to="/account/wishlist" className="hidden sm:grid"><Heart size={20} /></IconBtn>
             <Link ref={bagRef} to="/cart" aria-label={`Shopping bag, ${count} items`} className="relative grid size-11 place-items-center hover:text-neon">
               <ShoppingBag size={21} />

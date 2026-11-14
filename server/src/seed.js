@@ -48,14 +48,15 @@ function productMedia(p) {
 }
 
 await sequelize.transaction(async (transaction) => {
+  // ADMIN_EMAIL is the first super_admin; further admins are created from Admin → Staff.
   const email = (process.env.ADMIN_EMAIL || 'admin@bakachiki.in').toLowerCase();
   const [admin, adminCreated] = await User.findOrCreate({
     where: { email },
-    defaults: { name: 'BAKACHIKI Admin', role: 'admin', password_hash: await bcrypt.hash(process.env.ADMIN_PASSWORD || 'ChangeMe@123', 12) },
+    defaults: { name: 'BAKACHIKI Admin', role: 'super_admin', password_hash: await bcrypt.hash(process.env.ADMIN_PASSWORD || 'ChangeMe@123', 12) },
     transaction,
   });
-  if (!adminCreated && admin.role !== 'admin') await admin.update({ role: 'admin' }, { transaction });
-  console.log(adminCreated ? `Admin created: ${email}` : `Admin exists: ${email}`);
+  if (!adminCreated && (admin.role !== 'super_admin' || !admin.is_active)) await admin.update({ role: 'super_admin', is_active: true }, { transaction });
+  console.log(adminCreated ? `Super admin created: ${email}` : `Super admin exists: ${email}`);
 
   const cats = {};
   for (const [i, c] of [

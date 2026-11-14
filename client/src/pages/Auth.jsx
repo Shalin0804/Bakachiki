@@ -36,7 +36,7 @@ export default function Auth({ mode }) {
       if (mode === 'login' || mode === 'register') {
         const u = mode === 'login' ? await login({ email: form.email, password: form.password }) : await register(form);
         toast(mode === 'login' ? `Hey ${u.name.split(' ')[0]}!` : 'Account created — welcome to BAKACHIKI');
-        navigate(next || (u.role === 'admin' ? '/admin' : '/account'), { replace: true });
+        navigate(next || '/account', { replace: true });
       } else if (mode === 'forgot') {
         const { data } = await api.post('/auth/forgot-password', { email: form.email });
         setSent(data.message);

@@ -13,13 +13,17 @@ const id = { type: T.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true };
 const fk = (allowNull = false) => ({ type: T.INTEGER.UNSIGNED, allowNull });
 const money = (allowNull = false) => ({ type: T.INTEGER.UNSIGNED, allowNull, validate: { min: 0 } });
 
+export const ROLES = ['customer', 'admin', 'super_admin'];
+export const STAFF_ROLES = ['admin', 'super_admin'];
+
 export const User = sequelize.define('User', {
   id,
   name: { type: T.STRING(120), allowNull: false },
   email: { type: T.STRING(190), allowNull: false, unique: true, validate: { isEmail: true } },
   phone: T.STRING(20),
   password_hash: { type: T.STRING(100), allowNull: false },
-  role: { type: T.ENUM('customer', 'admin'), allowNull: false, defaultValue: 'customer' },
+  role: { type: T.ENUM(...ROLES), allowNull: false, defaultValue: 'customer' },
+  is_active: { type: T.BOOLEAN, allowNull: false, defaultValue: true },
   reset_token_hash: T.STRING(64),
   reset_expires: T.DATE,
 }, {

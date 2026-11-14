@@ -1,13 +1,16 @@
-// Admin API — every route requires an admin JWT.
+// Admin API — every route requires an admin-panel JWT for an active admin or super_admin.
+// Staff management (/staff) is super_admin only.
 import { Router } from 'express';
 import { z } from 'zod';
 import { Op, fn, col, literal } from 'sequelize';
 import { sequelize } from '../db.js';
 import {
-  User, Address, Product, ProductImage, Variant, Category, Collection, Inventory, Order, OrderItem, Payment,
+  User, Address, STAFF_ROLES, Product, ProductImage, Variant, Category, Collection, Inventory, Order, OrderItem, Payment,
   Coupon, CouponUsage, Review, SIZES, ORDER_STATUSES, PAYMENT_STATUSES, MEDIA_KINDS,
 } from '../models.js';
-import { validate, requireAdmin, fail } from '../middleware.js';
+import bcrypt from 'bcryptjs';
+import { validate, requireAdmin, requireSuperAdmin, fail } from '../middleware.js';
+import { emailSchema, passwordSchema } from './auth.js';
 import { upload, saveFile, deleteFile } from '../services/storage.js';
 import { getSettings, saveSetting, DEFAULT_SETTINGS } from '../services/settings.js';
 import { moveStock, cancelOrder } from '../services/orders.js';
@@ -242,6 +245,15 @@ r.post('/variants/:id/stock', validate({
   res.json({ variant });
 });
 
+r.get('/stock', validate({ query: z.object({ q: z.string().trim().max(80).optional(), low: z.coerce.number().int().min(0).optional() }) }), async (req, res) => {
+  const where = req.q.low !== undefined ? { stock: { [Op.lte]: req.q.low } } : {};
+  const variants = await Variant.findAll({
+    where, order: [['product_id', 'ASC'], ['color', 'ASC'], ['id', 'ASC']],
+    include: [{ model: Product, as: 'product', attributes: ['id', 'name'], where: req.q.q ? { name: { [Op.like]: `%${req.q.q}%` } } : undefined }],
+  });
+  res.json({ variants });
+});
+
 // ---------------- Orders ----------------
 r.get('/orders', validate({ query: pageQuery }), async (req, res) => {
   const { q, status, payment_status: paymentStatus, page, limit } = req.q;
@@ -307,10 +319,49 @@ r.get('/customers', validate({ query: pageQuery }), async (req, res) => {
 });
 
 r.get('/customers/:id', validate({ params: idParam }), async (req, res) => {
-  const customer = await User.findByPk(req.params.id, { include: [{ model: Address, as: 'addresses' }] });
+  const customer = await User.findOne({ where: { id: req.params.id, role: 'customer' }, include: [{ model: Address, as: 'addresses' }] });
   if (!customer) fail(404, 'Customer not found');
   const orders = await Order.findAll({ where: { [Op.or]: [{ user_id: customer.id }, { email: customer.email }] }, order: [['created_at', 'DESC']], include: [{ model: OrderItem, as: 'items' }] });
   res.json({ customer, orders });
+});
+
+r.patch('/customers/:id', validate({ params: idParam, body: z.object({ is_active: z.boolean() }) }), async (req, res) => {
+  const customer = await User.findOne({ where: { id: req.params.id, role: 'customer' } });
+  if (!customer) fail(404, 'Customer not found');
+  res.json({ customer: await customer.update({ is_active: req.body.is_active }) });
+});
+
+// ---------------- Staff (super_admin only) ----------------
+const staffAttrs = ['id', 'name', 'email', 'phone', 'role', 'is_active', 'created_at'];
+r.get('/staff', requireSuperAdmin, async (_req, res) => {
+  res.json({ staff: await User.findAll({ where: { role: STAFF_ROLES }, attributes: staffAttrs, order: [['created_at', 'ASC']] }) });
+});
+
+r.post('/staff', requireSuperAdmin, validate({
+  body: z.object({ name: z.string().trim().min(2).max(120), email: emailSchema, password: passwordSchema, role: z.enum(STAFF_ROLES) }),
+}), async (req, res) => {
+  if (await User.count({ where: { email: req.body.email } })) fail(409, 'An account with this email already exists');
+  const user = await User.create({ ...req.body, password_hash: await bcrypt.hash(req.body.password, 12) });
+  res.status(201).json({ user: await User.findByPk(user.id, { attributes: staffAttrs }) });
+});
+
+r.patch('/staff/:id', requireSuperAdmin, validate({
+  params: idParam,
+  body: z.object({
+    name: z.string().trim().min(2).max(120).optional(),
+    role: z.enum(STAFF_ROLES).optional(),
+    is_active: z.boolean().optional(),
+    password: passwordSchema.optional(),
+  }),
+}), async (req, res) => {
+  const user = await User.findOne({ where: { id: req.params.id, role: STAFF_ROLES } });
+  if (!user) fail(404, 'Staff member not found');
+  const { password, ...changes } = req.body;
+  // Stops a super_admin from locking themselves (and possibly everyone) out.
+  if (user.id === req.user.id && (changes.role === 'admin' || changes.is_active === false)) fail(422, 'You cannot demote or deactivate your own account');
+  if (password) changes.password_hash = await bcrypt.hash(password, 12);
+  await user.update(changes);
+  res.json({ user: await User.findByPk(user.id, { attributes: staffAttrs }) });
 });
 
 // ---------------- Coupons ----------------

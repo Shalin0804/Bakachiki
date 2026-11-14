@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, NavLink, Route, Routes, useNavigate, useParams } from 'react-router-dom';
+import { Link, Navigate, NavLink, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { LogOut, Plus, Pencil, Trash2, Star } from 'lucide-react';
 import { useAuth, useUi } from '../context/store.jsx';
 import { api, asset, inr, formatDate } from '../lib/api.js';
@@ -9,7 +9,7 @@ import ProductCard from '../components/ProductCard.jsx';
 import { OrderDetail } from './OrderView.jsx';
 import { STATES } from './Checkout.jsx';
 
-const TABS = [['', 'Profile'], ['orders', 'Orders'], ['wishlist', 'Wishlist'], ['addresses', 'Addresses']];
+const TABS = [['profile', 'Profile'], ['orders', 'Orders'], ['wishlist', 'Wishlist'], ['addresses', 'Addresses']];
 
 export default function Account() {
   const { user, logout } = useAuth();
@@ -23,7 +23,6 @@ export default function Account() {
           <h1 className="display mt-2 text-5xl sm:text-7xl">Hey, {user.name.split(' ')[0]}</h1>
         </div>
         <div className="flex gap-2">
-          {user.role === 'admin' && <Link to="/admin" className="btn btn-ghost min-h-11">Admin</Link>}
           <button onClick={() => { logout(); navigate('/'); }} className="btn btn-ghost min-h-11"><LogOut size={15} />Log out</button>
         </div>
       </div>
@@ -38,7 +37,8 @@ export default function Account() {
       </nav>
       <div className="py-10">
         <Routes>
-          <Route index element={<Profile />} />
+          <Route index element={<Navigate to="profile" replace />} />
+          <Route path="profile" element={<Profile />} />
           <Route path="orders" element={<Orders />} />
           <Route path="orders/:number" element={<AccountOrder />} />
           <Route path="wishlist" element={<Wishlist />} />

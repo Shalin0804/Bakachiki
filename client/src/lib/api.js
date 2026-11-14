@@ -10,13 +10,23 @@ const store = {
 export const tokens = {
   auth: () => store.get('bk_token'),
   setAuth: (t) => store.set('bk_token', t),
+  // Admin panel session is kept apart from the storefront one; the server also issues them for different audiences.
+  admin: () => store.get('bk_admin_token'),
+  setAdmin: (t) => store.set('bk_admin_token', t),
   cart: () => store.get('bk_cart'),
   setCart: (t) => store.set('bk_cart', t),
 };
 
 export const api = axios.create({ baseURL: `${API_ORIGIN}/api`, timeout: 20000 });
 
+const isAdminCall = (url = '') => url.startsWith('/admin') || url.startsWith('/auth/admin');
+
 api.interceptors.request.use((config) => {
+  if (isAdminCall(config.url)) {
+    const admin = tokens.admin();
+    if (admin) config.headers.Authorization = `Bearer ${admin}`;
+    return config;
+  }
   const auth = tokens.auth();
   const cart = tokens.cart();
   if (auth) config.headers.Authorization = `Bearer ${auth}`;
@@ -31,7 +41,10 @@ api.interceptors.response.use(
     const e = new Error(data?.error || (err.code === 'ECONNABORTED' ? 'The server took too long to respond' : 'Network error — check your connection'));
     e.status = err.response?.status;
     e.details = data?.details;
-    if (e.status === 401 && tokens.auth()) window.dispatchEvent(new Event('bk:unauthorized'));
+    if (e.status === 401) {
+      if (isAdminCall(err.config?.url)) { if (tokens.admin()) window.dispatchEvent(new Event('bk:admin-unauthorized')); }
+      else if (tokens.auth()) window.dispatchEvent(new Event('bk:unauthorized'));
+    }
     return Promise.reject(e);
   },
 );

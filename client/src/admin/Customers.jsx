@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { inr, formatDate } from '../lib/api.js';
+import { api, inr, formatDate } from '../lib/api.js';
+import { useUi } from '../context/store.jsx';
 import { PageLoader, StatusPill } from '../components/ui.jsx';
 import { PageHead, Card, useFetch, Table, SearchBox, Pager } from './kit.jsx';
 
@@ -30,14 +31,20 @@ export function CustomerList() {
 
 export function CustomerDetail() {
   const { id } = useParams();
-  const [data, , loading, error] = useFetch(`/admin/customers/${id}`);
+  const [data, reload, loading, error] = useFetch(`/admin/customers/${id}`);
+  const { toast } = useUi();
   if (loading && !data) return <PageLoader />;
   if (error) return <p className="text-danger">{error}</p>;
   const { customer: c, orders } = data;
   const spent = orders.filter((o) => o.status !== 'cancelled').reduce((s, o) => s + o.total, 0);
   return (
     <>
-      <PageHead title={c.name} />
+      <PageHead title={c.name}>
+        <span className={`self-center text-xs font-bold uppercase tracking-wider ${c.is_active ? 'text-neon' : 'text-danger'}`}>{c.is_active ? 'Active' : 'Disabled'}</span>
+        <button className="btn btn-ghost min-h-11" onClick={async () => {
+          try { await api.patch(`/admin/customers/${c.id}`, { is_active: !c.is_active }); toast(c.is_active ? 'Account disabled — they are signed out everywhere' : 'Account re-enabled'); reload(); } catch (e) { toast(e.message, 'error'); }
+        }}>{c.is_active ? 'Disable account' : 'Enable account'}</button>
+      </PageHead>
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6">
           <Card title="Information">

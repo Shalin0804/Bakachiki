@@ -21,6 +21,7 @@ Full-stack streetwear e-commerce store. `client/` = React 19 + Vite + Tailwind 4
 - Schema changes: add a new file in `server/src/migrations/`, then mirror it in `server/src/models.js`. Never edit a migration that has already run.
 - Attributes and JSON are snake_case end to end. Money is whole rupees (integers); Razorpay gets paise.
 - Stock changes go through `moveStock()` in `server/src/services/orders.js`, which writes the inventory ledger.
+- Auth: one `users` table, roles `customer` / `admin` / `super_admin`. Storefront tokens (aud `store`) only authenticate customers via `optionalAuth`/`requireAuth`; admin tokens (aud `admin`) via `requireAdmin`/`requireSuperAdmin`. Never read the role from the token or request — the middleware reloads the user. Client keeps `bk_token` and `bk_admin_token` separately; `/admin*` and `/auth/admin*` calls use the admin one.
 - Orders become `paid` only via Razorpay signature verification (`markRazorpayPaid`); admins can mark COD orders paid.
 - Admin-editable content belongs in `DEFAULT_SETTINGS` (`server/src/services/settings.js`). The admin Content editor renders its fields from that shape.
 - Validate every request with Zod via `validate()`; throw errors with `fail(status, message)`.

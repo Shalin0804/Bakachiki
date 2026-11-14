@@ -82,7 +82,7 @@ export default function Content() {
 
   return (
     <>
-      <PageHead title="Website content"><button onClick={save} disabled={busy} className="btn btn-solid min-h-11">{busy ? 'Saving…' : 'Save & publish'}</button></PageHead>
+      <PageHead title="Settings & content"><button onClick={save} disabled={busy} className="btn btn-solid min-h-11">{busy ? 'Saving…' : 'Save & publish'}</button></PageHead>
       <div className="grid gap-6 lg:grid-cols-4">
         <nav aria-label="Content sections" className="scrollbar-none flex gap-1 overflow-x-auto lg:flex-col">
           {SECTIONS.map(([k, label]) => (

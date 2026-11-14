@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { ValidationError, UniqueConstraintError, ForeignKeyConstraintError } from 'sequelize';
 import { z } from 'zod';
 import { MulterError } from 'multer';
-import { User } from './models.js';
+import { User, STAFF_ROLES } from './models.js';
 
 export class HttpError extends Error {
   constructor(status, message, details) { super(message); this.status = status; this.details = details; }
@@ -10,21 +10,41 @@ export class HttpError extends Error {
 export const fail = (status, message, details) => { throw new HttpError(status, message, details); };
 
 const secret = () => process.env.JWT_SECRET || fail(500, 'JWT_SECRET is not configured');
-export const signToken = (user) => jwt.sign({ sub: user.id, role: user.role }, secret(), { expiresIn: process.env.JWT_EXPIRES_IN || '7d' });
 
-// Attaches req.user when a valid bearer token is present; never rejects.
-export async function optionalAuth(req, _res, next) {
+// Two audiences share one users table: storefront tokens ('store') and admin-panel tokens ('admin').
+// The role is never read from the token — every request reloads the user and checks the role in MySQL.
+export const signToken = (user, aud = 'store') => jwt.sign({ sub: user.id }, secret(), {
+  audience: aud, expiresIn: aud === 'admin' ? process.env.ADMIN_JWT_EXPIRES_IN || '12h' : process.env.JWT_EXPIRES_IN || '7d',
+});
+
+async function userFromToken(req, aud) {
   const header = req.get('authorization') || '';
-  if (header.startsWith('Bearer ')) {
-    try {
-      const { sub } = jwt.verify(header.slice(7), secret());
-      req.user = await User.findByPk(sub);
-    } catch { /* invalid/expired token → treated as guest */ }
-  }
+  if (!header.startsWith('Bearer ')) return null;
+  try {
+    const { sub } = jwt.verify(header.slice(7), secret(), { audience: aud });
+    const user = await User.findByPk(sub);
+    return user?.is_active ? user : null;
+  } catch { return null; }
+}
+
+// Storefront: attaches req.user for a valid, active customer token; never rejects.
+export async function optionalAuth(req, _res, next) {
+  const user = await userFromToken(req, 'store');
+  if (user?.role === 'customer') req.user = user;
   next();
 }
 export const requireAuth = [optionalAuth, (req, _res, next) => (req.user ? next() : fail(401, 'Please log in to continue'))];
-export const requireAdmin = [...requireAuth, (req, _res, next) => (req.user.role === 'admin' ? next() : fail(403, 'Admins only'))];
+
+// Admin panel: needs an admin-audience token whose user is still active staff in the database.
+const staffOnly = (roles) => async (req, _res, next) => {
+  const user = await userFromToken(req, 'admin');
+  if (!user || !STAFF_ROLES.includes(user.role)) fail(401, 'Please sign in to the admin panel');
+  if (!roles.includes(user.role)) fail(403, 'You do not have permission to do this');
+  req.user = user;
+  next();
+};
+export const requireAdmin = staffOnly(STAFF_ROLES);
+export const requireSuperAdmin = staffOnly(['super_admin']);
 
 // validate({ body: schema, query: schema, params: schema }) → parsed values replace the raw ones.
 export const validate = (schemas) => (req, _res, next) => {
