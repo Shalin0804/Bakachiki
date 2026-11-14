@@ -60,7 +60,7 @@ export function OrderDetail({ number, emailHint = '', placed = false }) {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-10 border border-neon bg-neon/5 p-6 text-center sm:p-10">
           <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', delay: 0.2 }} className="mx-auto grid size-16 place-items-center rounded-full bg-neon text-ink"><Check size={32} strokeWidth={3} /></motion.span>
           <p className="display mt-5 text-5xl sm:text-6xl">Order locked in</p>
-          <p className="hindi mt-1 text-4xl text-green">धन्यवाद!</p>
+          <p className="hindi mt-1 text-4xl text-green">बाकाचिकी</p>
           <p className="mt-3 text-mute">Confirmation for <b className="text-paper">{order.email}</b>. We’ll update you as it moves.</p>
         </motion.div>
       )}

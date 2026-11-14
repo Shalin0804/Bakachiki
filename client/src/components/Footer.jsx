@@ -9,10 +9,10 @@ export default function Footer() {
   const year = new Date().getFullYear();
   return (
     <footer className="relative mt-24 overflow-hidden border-t border-line bg-ink">
-      <Marquee items={['STAY LOUD', 'बकचिकी', 'WEAR HINDI', 'PUFF PRINT ONLY']} speed={34} className="border-b border-line py-4" itemClass="display text-3xl sm:text-5xl text-paper/90" />
+      <Marquee items={['STAY LOUD', 'बाकाचिकी', 'WEAR HINDI', 'PUFF PRINT ONLY']} speed={34} className="border-b border-line py-4" itemClass="display text-3xl sm:text-5xl text-paper/90" />
       <div className="mx-auto grid max-w-[1600px] gap-12 px-5 py-16 sm:px-8 md:grid-cols-12 lg:px-10">
         <div className="md:col-span-5">
-          <p className="hindi text-6xl text-green sm:text-7xl">बकचिकी</p>
+          <p className="hindi text-6xl text-green sm:text-7xl">बाकाचिकी</p>
           <p className="mt-4 max-w-sm text-mute">Funky, unconventional streetwear from India. Oversized tees with loud Hindi type and raised puff print.</p>
           <ul className="mt-8 space-y-3 text-sm">
             {c.email && <li><a className="inline-flex items-center gap-3 hover:text-neon" href={`mailto:${c.email}`}><Mail size={16} />{c.email}</a></li>}

@@ -14,9 +14,9 @@ export default function Collections() {
     <Page className="mx-auto max-w-[1600px] px-4 pt-32 sm:px-8 lg:px-10">
       <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-8">
         <MaskText as="h1" lines={['Collections']} className="display text-6xl sm:text-9xl" inView={false} />
-        <p className="hindi text-6xl text-green sm:text-8xl" aria-hidden="true">संग्रह</p>
+        <p className="hindi text-6xl text-green sm:text-8xl" aria-hidden="true">बाकाचिकी</p>
       </div>
-      {!list ? <PageLoader /> : !list.length ? <div className="mt-10"><Empty title="No collections yet" hindi="जल्द आ रहा है" /></div> : (
+      {!list ? <PageLoader /> : !list.length ? <div className="mt-10"><Empty title="No collections yet" hindi="बाकाचिकी" /></div> : (
         <ol className="mt-4">
           {list.map((c, i) => (
             <Reveal key={c.id} delay={i * 0.05}>

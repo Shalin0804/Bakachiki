@@ -69,7 +69,7 @@ export default function Checkout() {
   };
 
   if (!loaded) return <div className="grid min-h-[70vh] place-items-center"><Spinner /></div>;
-  if (!cart.items.length) return <Page className="px-4 pt-36"><Empty title="Nothing to check out" hindi="खाली" action={<Link to="/shop" className="btn btn-solid">Shop the drop</Link>} /></Page>;
+  if (!cart.items.length) return <Page className="px-4 pt-36"><Empty title="Nothing to check out" hindi="बाकाचिकी" action={<Link to="/shop" className="btn btn-solid">Shop the drop</Link>} /></Page>;
 
   return (
     <Page className="mx-auto max-w-[1400px] px-4 pt-28 sm:px-8 lg:pt-32">

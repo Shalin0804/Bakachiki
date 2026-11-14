@@ -7,7 +7,7 @@ import { Page, MaskText, Modal, Empty } from '../components/ui.jsx';
 import ProductCard, { ProductGridSkeleton } from '../components/ProductCard.jsx';
 
 const SORTS = [['newest', 'Newest'], ['price_asc', 'Price: Low to High'], ['price_desc', 'Price: High to Low'], ['popular', 'Popularity']];
-const HINDI = { all: 'सब कुछ', new: 'नया माल', bestseller: 'सबसे हिट' };
+const HINDI = { all: 'बाकाचिकी', new: 'बाकाचिकी', bestseller: 'बाकाचिकी' };
 
 export default function Shop({ preset }) {
   const { category, collection } = useParams();
@@ -59,7 +59,7 @@ export default function Shop({ preset }) {
 
   const cat = meta.categories.find((c) => c.slug === category);
   const title = col?.name || cat?.name || (badge === 'new' ? 'New Drops' : badge === 'bestseller' ? 'Best Sellers' : filters.q ? `“${filters.q}”` : 'Shop All');
-  const hindi = HINDI[badge] || (col ? 'संग्रह' : cat ? 'चुनिंदा' : HINDI.all);
+  const hindi = HINDI[badge] || (col ? 'बाकाचिकी' : cat ? 'बाकाचिकी' : HINDI.all);
   useSeo({ title, description: col?.description || cat?.description || `Shop ${title} — oversized Hindi streetwear tees from BAKACHIKI.` });
 
   const tabs = [
@@ -156,7 +156,7 @@ export default function Shop({ preset }) {
 
           {error && <p className="text-danger" role="alert">{error}</p>}
           {loading && page === 1 ? <ProductGridSkeleton n={6} /> : data.products.length === 0 ? (
-            <Empty title="Nothing here yet" hindi="खाली" action={activeCount ? <button className="btn btn-ghost" onClick={clearAll}>Clear filters</button> : <Link to="/shop" className="btn btn-ghost">Shop all</Link>}>
+            <Empty title="Nothing here yet" hindi="बाकाचिकी" action={activeCount ? <button className="btn btn-ghost" onClick={clearAll}>Clear filters</button> : <Link to="/shop" className="btn btn-ghost">Shop all</Link>}>
               {activeCount ? 'No pieces match these filters.' : 'This drop is still cooking. Check back soon.'}
             </Empty>
           ) : (

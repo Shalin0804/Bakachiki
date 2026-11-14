@@ -20,7 +20,7 @@ export default function Contact() {
     <Page className="mx-auto max-w-[1600px] px-4 pt-28 sm:px-8 lg:px-10 lg:pt-32">
       <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-8">
         <MaskText as="h1" lines={['Holla at us']} className="display text-6xl sm:text-9xl" inView={false} />
-        <p className="hindi text-6xl text-green sm:text-8xl" aria-hidden="true">संपर्क</p>
+        <p className="hindi text-6xl text-green sm:text-8xl" aria-hidden="true">बाकाचिकी</p>
       </div>
       <p className="mt-8 max-w-xl text-lg text-mute">Orders, returns, size exchanges or a collab idea — reach out and a real human from the BAKACHIKI crew will reply.</p>
       <ul className="mt-12 grid gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">

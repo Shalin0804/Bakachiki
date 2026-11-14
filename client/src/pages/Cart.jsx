@@ -59,12 +59,12 @@ export default function Cart() {
     <Page className="mx-auto max-w-[1600px] px-4 pt-28 sm:px-8 lg:px-10 lg:pt-32">
       <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-6">
         <MaskText as="h1" lines={['Your Bag']} className="display text-6xl sm:text-8xl" inView={false} />
-        <p className="hindi text-5xl text-green" aria-hidden="true">झोला</p>
+        <p className="hindi text-5xl text-green" aria-hidden="true">बाकाचिकी</p>
       </div>
 
       {!cart.items.length ? (
         <div className="mt-10">{cartLoading ? <div className="grid h-60 place-items-center"><Spinner /></div> : (
-          <Empty title="Your bag is empty" hindi="खाली झोला" action={<Link to="/shop" className="btn btn-solid">Start shopping<ArrowRight size={16} /></Link>}>Fill it with something loud.</Empty>
+          <Empty title="Your bag is empty" hindi="बाकाचिकी" action={<Link to="/shop" className="btn btn-solid">Start shopping<ArrowRight size={16} /></Link>}>Fill it with something loud.</Empty>
         )}</div>
       ) : (
         <div className="mt-8 grid gap-10 lg:grid-cols-12">

@@ -86,7 +86,7 @@ function Orders() {
   const [orders, setOrders] = useState(null);
   useEffect(() => { api.get('/orders/mine').then(({ data }) => setOrders(data.orders)).catch(() => setOrders([])); }, []);
   if (!orders) return <Spinner />;
-  if (!orders.length) return <Empty title="No orders yet" hindi="अभी नहीं" action={<Link to="/shop" className="btn btn-solid">Shop the drop</Link>} />;
+  if (!orders.length) return <Empty title="No orders yet" hindi="बाकाचिकी" action={<Link to="/shop" className="btn btn-solid">Shop the drop</Link>} />;
   return (
     <ul className="divide-y divide-line border-y border-line">
       {orders.map((o) => (
@@ -115,7 +115,7 @@ function AccountOrder() {
 
 function Wishlist() {
   const { wishlist } = useAuth();
-  if (!wishlist.length) return <Empty title="Wishlist is empty" hindi="पसंदीदा" action={<Link to="/shop" className="btn btn-solid">Find something</Link>}>Tap the heart on any piece to save it here.</Empty>;
+  if (!wishlist.length) return <Empty title="Wishlist is empty" hindi="बाकाचिकी" action={<Link to="/shop" className="btn btn-solid">Find something</Link>}>Tap the heart on any piece to save it here.</Empty>;
   return <div className="grid grid-cols-2 gap-x-3 gap-y-10 sm:gap-x-5 lg:grid-cols-4">{wishlist.map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}</div>;
 }
 

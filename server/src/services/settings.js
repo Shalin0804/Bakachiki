@@ -7,13 +7,13 @@ export const DEFAULT_SETTINGS = {
   hero: {
     eyebrow: 'DROP 01 — HINDI PUFF SERIES',
     title: 'BAKACHIKI',
-    hindi: 'बकचिकी',
+    hindi: 'बाकाचिकी',
     subtitle: 'Oversized tees with loud Hindi type, raised puff print and zero chill. Made for the streets that raised us.',
     images: ['/uploads/seed/products/jet-black/99_spec_sheet.jpg', '/uploads/seed/products/beige/99_spec_sheet.jpg'],
     cta_primary: { label: 'EXPLORE THE DROP', href: '/new-drops' },
     cta_secondary: { label: 'SHOP NOW', href: '/shop' },
   },
-  marquee: { items: ['BAKACHIKI', 'बकचिकी', 'PUFF PRINT', '240 GSM', 'DROP SHOULDER', 'MADE IN INDIA'] },
+  marquee: { items: ['BAKACHIKI', 'बाकाचिकी', 'PUFF PRINT', '240 GSM', 'DROP SHOULDER', 'MADE IN INDIA'] },
   promo: {
     enabled: true,
     eyebrow: 'THE PUFF EFFECT',
@@ -25,7 +25,7 @@ export const DEFAULT_SETTINGS = {
   },
   about: {
     title: 'NOT YOUR AVERAGE TEE.',
-    hindi: 'हम अलग हैं',
+    hindi: 'बाकाचिकी',
     body: 'BAKACHIKI started with one idea: Hindi deserves to be worn loud. We take the script we grew up with, blow it up across the back of heavyweight oversized tees, and raise it with puff print so it literally stands out.\n\nEvery piece is cut drop-shoulder and boxy, built on 240 GSM cotton that holds its shape wash after wash.',
     image_url: '/uploads/seed/products/beige/08_back_model.png',
     pillars: [

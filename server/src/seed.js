@@ -24,17 +24,17 @@ const tee = (color, hex, dir, code, category, flags, description) => ({
 const NEW = { is_featured: false, is_new_arrival: true, is_best_seller: false };
 const products = [
   tee('Black', '#151815', 'jet-black', 'BLK', 'oversized-t-shirts', { is_featured: true, is_new_arrival: true, is_best_seller: true },
-    'The OG. A jet-black oversized tee with BAKACHIKI in raised green puff print and a giant Devanagari बकचिकी across the back. Cut boxy with a drop shoulder on 240 GSM cotton.'),
+    'The OG. A jet-black oversized tee with BAKACHIKI in raised green puff print and a giant Devanagari बाकाचिकी across the back. Cut boxy with a drop shoulder on 240 GSM cotton.'),
   tee('Beige', '#D8C8A6', 'beige', 'BEG', 'graphic-tees', { is_featured: true, is_new_arrival: true, is_best_seller: false },
-    'Sand-toned oversized tee with green puff BAKACHIKI branding and loud बकचिकी Hindi typography on the back. Drop-shoulder, boxy, built on 240 GSM cotton.'),
+    'Sand-toned oversized tee with green puff BAKACHIKI branding and loud बाकाचिकी Hindi typography on the back. Drop-shoulder, boxy, built on 240 GSM cotton.'),
   tee('Off-White', '#EEEBE3', 'off-white', 'OWT', 'graphic-tees', NEW,
-    'Clean off-white oversized tee with green puff BAKACHIKI on the chest and बकचिकी raised across the back. Drop-shoulder, boxy, 240 GSM cotton.'),
+    'Clean off-white oversized tee with green puff BAKACHIKI on the chest and बाकाचिकी raised across the back. Drop-shoulder, boxy, 240 GSM cotton.'),
   tee('Forest Green', '#1E4A2A', 'forest-green', 'FGR', 'oversized-t-shirts', NEW,
-    'Deep forest-green oversized tee with BAKACHIKI in raised green puff print and बकचिकी across the back. Drop-shoulder, boxy, 240 GSM cotton.'),
+    'Deep forest-green oversized tee with BAKACHIKI in raised green puff print and बाकाचिकी across the back. Drop-shoulder, boxy, 240 GSM cotton.'),
   tee('Purple', '#4A2163', 'purple', 'PRP', 'graphic-tees', NEW,
-    'Rich purple oversized tee with green puff BAKACHIKI branding and loud बकचिकी Hindi typography on the back. Drop-shoulder, boxy, 240 GSM cotton.'),
+    'Rich purple oversized tee with green puff BAKACHIKI branding and loud बाकाचिकी Hindi typography on the back. Drop-shoulder, boxy, 240 GSM cotton.'),
   tee('Charcoal Grey', '#3B3E40', 'charcoal-grey', 'CGR', 'oversized-t-shirts', NEW,
-    'Charcoal-grey oversized tee with BAKACHIKI in raised green puff print and बकचिकी across the back. Drop-shoulder, boxy, 240 GSM cotton.'),
+    'Charcoal-grey oversized tee with BAKACHIKI in raised green puff print and बाकाचिकी across the back. Drop-shoulder, boxy, 240 GSM cotton.'),
 ];
 
 // Photos live in uploads/seed/products/<dir>/NN_<view>.png, numbered in display order.

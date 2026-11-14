@@ -6,11 +6,11 @@ import { useAuth, useCart, useSettings, useUi } from '../context/store.jsx';
 import { api, asset, inr } from '../lib/api.js';
 
 const NAV = [
-  { to: '/', label: 'Home', hindi: 'घर' },
-  { to: '/shop', label: 'Shop', hindi: 'दुकान' },
-  { to: '/new-drops', label: 'New Drops', hindi: 'नया' },
-  { to: '/collections', label: 'Collections', hindi: 'संग्रह' },
-  { to: '/about', label: 'About', hindi: 'हम' },
+  { to: '/', label: 'Home', hindi: 'बाकाचिकी' },
+  { to: '/shop', label: 'Shop', hindi: 'बाकाचिकी' },
+  { to: '/new-drops', label: 'New Drops', hindi: 'बाकाचिकी' },
+  { to: '/collections', label: 'Collections', hindi: 'बाकाचिकी' },
+  { to: '/about', label: 'About', hindi: 'बाकाचिकी' },
 ];
 
 export const Logo = ({ className = '' }) => (

@@ -34,7 +34,7 @@ export default function About() {
         </div>
       </section>
 
-      <Marquee items={['WEAR HINDI', 'हिंदी पहनो', 'STAY LOUD']} className="mt-28 border-y border-line py-5" itemClass="display text-5xl sm:text-7xl" speed={30} />
+      <Marquee items={['WEAR HINDI', 'बाकाचिकी', 'STAY LOUD']} className="mt-28 border-y border-line py-5" itemClass="display text-5xl sm:text-7xl" speed={30} />
 
       <section className="mx-auto mt-24 grid max-w-[1600px] gap-px border border-line bg-line px-0 sm:grid-cols-3" aria-label="What we stand for">
         {about.pillars?.map((p, i) => (

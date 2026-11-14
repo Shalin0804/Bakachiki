@@ -7,10 +7,10 @@ import { useSeo } from '../lib/seo.js';
 import { Page, Field, MaskText } from '../components/ui.jsx';
 
 const COPY = {
-  login: { title: 'Welcome back', hindi: 'फिर से', cta: 'Log in' },
-  register: { title: 'Join the gang', hindi: 'स्वागत है', cta: 'Create account' },
-  forgot: { title: 'Forgot password', hindi: 'भूल गए?', cta: 'Send reset link' },
-  reset: { title: 'New password', hindi: 'नया', cta: 'Set password' },
+  login: { title: 'Welcome back', hindi: 'बाकाचिकी', cta: 'Log in' },
+  register: { title: 'Join the gang', hindi: 'बाकाचिकी', cta: 'Create account' },
+  forgot: { title: 'Forgot password', hindi: 'बाकाचिकी', cta: 'Send reset link' },
+  reset: { title: 'New password', hindi: 'बाकाचिकी', cta: 'Set password' },
 };
 
 export default function Auth({ mode }) {

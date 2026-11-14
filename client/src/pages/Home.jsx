@@ -133,7 +133,7 @@ export default function Home() {
 
       <section className="mx-auto max-w-[1600px] px-4 pt-28 sm:px-8 lg:px-10" aria-labelledby="drop-heading">
         <h2 id="drop-heading" className="sr-only">The drop</h2>
-        <SectionHead index="01" title="The Drop" hindi="नया माल" link="/new-drops" linkLabel="All new drops" />
+        <SectionHead index="01" title="The Drop" hindi="बाकाचिकी" link="/new-drops" linkLabel="All new drops" />
         <ProductRow params={{ badge: 'featured' }} />
       </section>
 
@@ -167,7 +167,7 @@ export default function Home() {
         <section className="mt-32" aria-labelledby="col-heading">
           <div className="mx-auto max-w-[1600px] px-4 sm:px-8 lg:px-10">
             <h2 id="col-heading" className="sr-only">Collections</h2>
-            <SectionHead index="03" title="Collections" hindi="संग्रह" link="/collections" linkLabel="View all" />
+            <SectionHead index="03" title="Collections" hindi="बाकाचिकी" link="/collections" linkLabel="View all" />
           </div>
           <div className="scrollbar-none flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 sm:px-8 lg:px-10">
             {collections.map((c, i) => (
@@ -191,7 +191,7 @@ export default function Home() {
 
       <section className="mx-auto mt-28 max-w-[1600px] px-4 sm:px-8 lg:px-10" aria-labelledby="best-heading">
         <h2 id="best-heading" className="sr-only">Best sellers</h2>
-        <SectionHead index="04" title="Best Sellers" hindi="सबसे हिट" link="/shop?badge=bestseller" linkLabel="Shop best sellers" />
+        <SectionHead index="04" title="Best Sellers" hindi="बाकाचिकी" link="/shop?badge=bestseller" linkLabel="Shop best sellers" />
         <ProductRow params={{ sort: 'popular' }} />
       </section>
 

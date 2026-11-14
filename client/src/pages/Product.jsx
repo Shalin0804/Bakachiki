@@ -59,7 +59,7 @@ export default function Product() {
     },
   } : { title: error ? 'Product not found' : undefined });
 
-  if (error) return <Page className="px-4 pt-36"><Empty title="Product not found" hindi="गायब" action={<Link to="/shop" className="btn btn-solid">Back to shop</Link>}>It may have sold out for good or moved.</Empty></Page>;
+  if (error) return <Page className="px-4 pt-36"><Empty title="Product not found" hindi="बाकाचिकी" action={<Link to="/shop" className="btn btn-solid">Back to shop</Link>}>It may have sold out for good or moved.</Empty></Page>;
   if (!product) return <div className="pt-28"><PageLoader /></div>;
 
   const specs = [['Fabric', product.fabric], ['GSM', product.gsm], ['Fit', product.fit], ['Print', product.print_type], ['Colours', product.colors.map((c) => c.name).join(', ')], ['Sizes', [...new Set(product.variants.map((v) => v.size))].join(' / ')]].filter(([, v]) => v);
@@ -195,7 +195,7 @@ function Reviews({ product }) {
     <section id="reviews" className="mx-auto mt-28 grid max-w-[1600px] gap-10 px-4 sm:px-8 lg:grid-cols-12 lg:px-10" aria-labelledby="reviews-h">
       <div className="lg:col-span-4">
         <h2 id="reviews-h" className="display text-5xl sm:text-6xl">Reviews</h2>
-        <p className="hindi mt-1 text-4xl text-green" aria-hidden="true">आपकी राय</p>
+        <p className="hindi mt-1 text-4xl text-green" aria-hidden="true">बाकाचिकी</p>
         {product.rating.count > 0 && <p className="mt-6 flex items-center gap-3"><span className="display text-6xl text-neon">{product.rating.average}</span><Stars value={product.rating.average} size={18} /></p>}
         {user ? (
           <form onSubmit={submit} className="mt-8 space-y-4">

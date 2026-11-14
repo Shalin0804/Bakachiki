@@ -25,7 +25,7 @@ export function Loader({ ready }) {
                 <motion.span key={i} initial={{ y: '110%' }} animate={{ y: 0, color: i >= 4 ? '#39D353' : '#FFFFFF' }} transition={{ delay: 0.08 * i, duration: 0.6, ease: [0.2, 0.9, 0.1, 1] }}>{ch}</motion.span>
               ))}
             </div>
-            <motion.p className="hindi mt-2 text-4xl text-green" initial={{ opacity: 0, letterSpacing: '0.6em' }} animate={{ opacity: 1, letterSpacing: '0.05em' }} transition={{ delay: 0.75, duration: 0.8 }}>बकचिकी</motion.p>
+            <motion.p className="hindi mt-2 text-4xl text-green" initial={{ opacity: 0, letterSpacing: '0.6em' }} animate={{ opacity: 1, letterSpacing: '0.05em' }} transition={{ delay: 0.75, duration: 0.8 }}>बाकाचिकी</motion.p>
             <motion.div className="mx-auto mt-6 h-0.5 bg-neon" initial={{ width: 0 }} animate={{ width: 220 }} transition={{ delay: 0.3, duration: 1.3, ease: 'easeInOut' }} />
           </div>
         </motion.div>
